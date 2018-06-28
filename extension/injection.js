@@ -16,8 +16,14 @@ var getUrlParameter = function getUrlParameter(sParam) {
 };
 
 function performSearch() {
-    
-    var searchTerm = getUrlParameter('q').replace(/\+/g, ' ');
+	var crmResultContainer = $('#crmResult');
+	var searchBox = $('input[placeholder="Search in SharePoint"]');
+	if (crmResultContainer) {
+		$('#crmResult').remove();
+	}
+
+	// var searchTerm = getUrlParameter('q').replace(/\+/g, ' ');
+	var searchTerm = searchBox.val();
     console.log("fannout to Dynamics Online for search term: " + searchTerm);
 
     chrome.storage.local.get(['token'], function(result) {
@@ -61,6 +67,7 @@ function performSearch() {
 					var crmGroup = $('<li id="crmResult">').css('width', '100%');					
 					crmGroup.append($('<div class="FolderGroup-module__header___3aEV4">').append($('<span style="margin-right:5px">').text('Results from ')).append($('<a>').text('Dynamics 365').attr({'href': 'https://mengdongy2.crm5.dynamics.com', 'target': '_blank'})));
 					
+					var hasResult = false;
 					var typesContainer = $('<div>').css('width', '100%');
 					for (var i = 0; i < types.length; i ++)
 					{
@@ -68,10 +75,13 @@ function performSearch() {
 						var display = types[i].display;
 						var icon = types[i].icon;
 						var background = types[i].background;
-						
+						var results = $(getTypeResult(data, type)).find('a\\:Entity');
+						if (results.length) {
+							hasResult = true;
+						}
+
 						var typeGroup = $('<div>').css({'width': '25%', 'display': 'inline-block', 'vertical-align': 'top'});
 						typeGroup.append($('<div>').text(display).css('font-weight', "bold"));
-						var results = $(getTypeResult(data, type)).find('a\\:Entity');
 						$(results).each((j) => {
 							var result = results[j];
 							var idPropName = type + 'id';
@@ -102,8 +112,9 @@ function performSearch() {
 					}
 					
 					crmGroup.append(typesContainer);
-					
-					$('[class^="vNextSearchPage-module__list"]').prepend(crmGroup);
+					if (hasResult) {
+						$('[class^="vNextSearchPage-module__list"]').prepend(crmGroup);
+					}
 				},
                 data: '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><SdkClientVersion xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">9.0</SdkClientVersion></s:Header><s:Body><Execute xmlns="http://schemas.microsoft.com/xrm/2011/Contracts/Services" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><request i:type="b:ExecuteQuickFindRequest" xmlns:a="http://schemas.microsoft.com/xrm/2011/Contracts" xmlns:b="http://schemas.microsoft.com/crm/2011/Contracts"><a:Parameters xmlns:b="http://schemas.datacontract.org/2004/07/System.Collections.Generic"><a:KeyValuePairOfstringanyType><b:key>SearchText</b:key><b:value i:type="c:string" xmlns:c="http://www.w3.org/2001/XMLSchema">{{search_keyword}}</b:value></a:KeyValuePairOfstringanyType><a:KeyValuePairOfstringanyType><b:key>EntityGroupName</b:key><b:value i:type="c:string" xmlns:c="http://www.w3.org/2001/XMLSchema">Mobile Client Search</b:value></a:KeyValuePairOfstringanyType><a:KeyValuePairOfstringanyType><b:key>EntityNames</b:key><b:value i:nil="true" /></a:KeyValuePairOfstringanyType><a:KeyValuePairOfstringanyType><b:key>AppModule</b:key><b:value i:nil="true" /></a:KeyValuePairOfstringanyType></a:Parameters><a:RequestId i:nil="true" /><a:RequestName>ExecuteQuickFind</a:RequestName></request></Execute></s:Body></s:Envelope>'.replace('{{search_keyword}}', searchTerm),
 				error: () => {
@@ -145,29 +156,39 @@ function getFirstAvailablePropertyValue(entity, propNames) {
     return null;
 }
 
-$(document).ready(() => {
-    var listSize;
-    var intervalHandle;
+function attach() {
+    const searchButton = $('button[aria-label="Search"]');
+    if (!searchButton) {
+        return;
+    }
+    searchButton.on('click', performSearch);
+}
+
+attach();
+
+// $(document).ready(() => {
+//     var listSize;
+//     var intervalHandle;
 	
-	var depth = window.history.length;
-	setInterval(() => {
-		if (depth != window.history.length) {
-			depth = window.history.length;
-			setTimeout(() => {				
-				$('#crmResult').remove();
-				performSearch();
-			}, 3000);
-		}
-	}, 1000);
+// 	var depth = window.history.length;
+// 	setInterval(() => {
+// 		if (depth != window.history.length) {
+// 			depth = window.history.length;
+// 			setTimeout(() => {				
+// 				$('#crmResult').remove();
+// 				performSearch();
+// 			}, 3000);
+// 		}
+// 	}, 1000);
 	
-    intervalHandle = setInterval(() => {
-        if ((listSize = $('[class^="vNextSearchPage-module__list"]').children().length) > 0)
-        {
-            clearInterval(intervalHandle);
-            console.log('done');
-            performSearch();
-        }
+//     intervalHandle = setInterval(() => {
+//         if ((listSize = $('[class^="vNextSearchPage-module__list"]').children().length) > 0)
+//         {
+//             clearInterval(intervalHandle);
+//             console.log('done');
+//             performSearch();
+//         }
         
-        console.log('waiting ' + listSize);
-    }, 1000);
-});
+//         console.log('waiting ' + listSize);
+//     }, 1000);
+// });
