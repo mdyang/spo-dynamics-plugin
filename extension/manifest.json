@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+
+  "name": "Dynamics search on SPO",
+  "description": "This extension will allow you to search Dynamics CRM on SPO",
+  "version": "1.0",
+
+  "browser_action": {
+   "default_icon": "icon.png",
+   "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://microsoft.sharepoint.com/_layouts/15/sharepoint.aspx*", "https://microsoft.sharepoint-df.com/_layouts/15/sharepoint.aspx*"],
+      "run_at": "document_idle",
+      "js": ["jquery-3.3.1.js", "common.js", "injection.js"]
+    }
+  ],
+  "permissions": [
+   "activeTab", "*://*.dynamics.com/*", "storage"
+   ]
+}
