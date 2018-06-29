@@ -64,7 +64,7 @@ function performSearch() {
 							icon: '/_imgs/NavBar/ActionImgs/Opportunity_32.png'
 						}];
 						
-					var crmGroup = $('<li id="crmResult">').css('width', '100%');					
+					var crmGroup = $('<div id="crmResult">').css({'width': '100%', 'margin-top': '15px'});					
 					crmGroup.append($('<div class="FolderGroup-module__header___3aEV4">').append($('<span style="margin-right:5px">').text('Results from ')).append($('<a>').text('Dynamics 365').attr({'href': 'https://mengdongy2.crm5.dynamics.com', 'target': '_blank'})));
 					
 					var hasResult = false;
@@ -113,7 +113,7 @@ function performSearch() {
 					
 					crmGroup.append(typesContainer);
 					if (hasResult) {
-						$('[class^="vNextSearchPage-module__list"]').prepend(crmGroup);
+						$('.SPSearchUX-module__searchFilters___s1xp2').parent().after(crmGroup);
 					}
 				},
                 data: '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><SdkClientVersion xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">9.0</SdkClientVersion></s:Header><s:Body><Execute xmlns="http://schemas.microsoft.com/xrm/2011/Contracts/Services" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><request i:type="b:ExecuteQuickFindRequest" xmlns:a="http://schemas.microsoft.com/xrm/2011/Contracts" xmlns:b="http://schemas.microsoft.com/crm/2011/Contracts"><a:Parameters xmlns:b="http://schemas.datacontract.org/2004/07/System.Collections.Generic"><a:KeyValuePairOfstringanyType><b:key>SearchText</b:key><b:value i:type="c:string" xmlns:c="http://www.w3.org/2001/XMLSchema">{{search_keyword}}</b:value></a:KeyValuePairOfstringanyType><a:KeyValuePairOfstringanyType><b:key>EntityGroupName</b:key><b:value i:type="c:string" xmlns:c="http://www.w3.org/2001/XMLSchema">Mobile Client Search</b:value></a:KeyValuePairOfstringanyType><a:KeyValuePairOfstringanyType><b:key>EntityNames</b:key><b:value i:nil="true" /></a:KeyValuePairOfstringanyType><a:KeyValuePairOfstringanyType><b:key>AppModule</b:key><b:value i:nil="true" /></a:KeyValuePairOfstringanyType></a:Parameters><a:RequestId i:nil="true" /><a:RequestName>ExecuteQuickFind</a:RequestName></request></Execute></s:Body></s:Envelope>'.replace('{{search_keyword}}', searchTerm),
@@ -165,30 +165,3 @@ function attach() {
 }
 
 attach();
-
-// $(document).ready(() => {
-//     var listSize;
-//     var intervalHandle;
-	
-// 	var depth = window.history.length;
-// 	setInterval(() => {
-// 		if (depth != window.history.length) {
-// 			depth = window.history.length;
-// 			setTimeout(() => {				
-// 				$('#crmResult').remove();
-// 				performSearch();
-// 			}, 3000);
-// 		}
-// 	}, 1000);
-	
-//     intervalHandle = setInterval(() => {
-//         if ((listSize = $('[class^="vNextSearchPage-module__list"]').children().length) > 0)
-//         {
-//             clearInterval(intervalHandle);
-//             console.log('done');
-//             performSearch();
-//         }
-        
-//         console.log('waiting ' + listSize);
-//     }, 1000);
-// });
