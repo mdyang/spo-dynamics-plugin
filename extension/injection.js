@@ -1,3 +1,5 @@
+var dynamicsInstance = 'dynsearch1.crm.dynamics.com';
+
 var result = null;
 
 var getUrlParameter = function getUrlParameter(sParam) {
@@ -30,7 +32,7 @@ function performSearch() {
         if (result.token) {
             $.ajax({
                 method: 'post',
-                url: 'https://mengdongy2.crm5.dynamics.com/XRMServices/2011/Organization.svc/web',
+                url: 'https://' + dynamicsInstance + '/XRMServices/2011/Organization.svc/web',
                 contentType: 'text/xml',
                 datatype: 'xml', 
                 headers: { 
@@ -65,7 +67,7 @@ function performSearch() {
 						}];
 						
 					var crmGroup = $('<div id="crmResult">').css({'width': '100%', 'margin-top': '15px'});					
-					crmGroup.append($('<div class="FolderGroup-module__header___3aEV4">').append($('<span style="margin-right:5px">').text('Results from ')).append($('<a>').text('Dynamics 365').attr({'href': 'https://mengdongy2.crm5.dynamics.com', 'target': '_blank'})));
+					crmGroup.append($('<div class="FolderGroup-module__header___3aEV4">').append($('<span style="margin-right:5px">').text('Results from ')).append($('<a>').text('Dynamics 365').attr({'href': 'https://' + dynamicsInstance, 'target': '_blank'})));
 					
 					var hasResult = false;
 					var typesContainer = $('<div>').css('width', '100%');
@@ -94,13 +96,13 @@ function performSearch() {
 											.css('background-color', background)
 											.append($('<img>')
 												.attr({
-												'src': 'https://mengdongy2.crm5.dynamics.com' + icon})
+												'src': 'https://' + dynamicsInstance + icon})
 											)
 									)
 									.append(
 										$('<div style="display:inline-block;vertical-align:middle">').append($('<a>')
 											.attr({
-												'href': 'https://mengdongy2.crm5.dynamics.com/main.aspx?etn=' + type + '&pagetype=entityrecord&id=' + id, 
+												'href': 'https://' + dynamicsInstance + '/main.aspx?etn=' + type + '&pagetype=entityrecord&id=' + id, 
 												'target': '_blank'})
 											.text(name))
 									)
